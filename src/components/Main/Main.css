@@ -104,6 +104,7 @@
   outline: none;
   padding: 8px;
   font-size: 18px;
+  /* background-color: red; */
 }
 
 .search-box div {
@@ -182,7 +183,7 @@
 @media (max-width: 600px) {
   .main-bottom input {
     flex: none;
-    width: 150px;
+    width: 230px;
   }
 
   .main-bottom img {
@@ -201,7 +202,7 @@
 @media (min-width: 600px) {
   .main-bottom input {
     flex: none;
-    width: 150px;
+    width: 350px;
   }
 
   .main-bottom img {
