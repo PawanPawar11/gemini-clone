@@ -183,7 +183,8 @@
 @media (max-width: 600px) {
   .main-bottom input {
     flex: none;
-    width: 230px;
+    width: 150px;
+    /* background-color: red; */
   }
 
   .main-bottom img {
@@ -196,6 +197,10 @@
 
   .search-box div {
     gap: 5px;
+  }
+
+  .main .bottom-info {
+    margin: 5px auto;
   }
 }
 
