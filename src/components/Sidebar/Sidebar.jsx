@@ -1,10 +1,19 @@
+"use client";
+
 import { useContext, useState } from "react";
 import "./Sidebar.css";
-import { assets } from "../../assets/assets";
 import { Context } from "../../context/Context";
+import {
+  Menu,
+  Plus,
+  MessageSquare,
+  HelpCircle,
+  History,
+  Settings,
+} from "lucide-react";
 
 function Sidebar() {
-  const [extended, setExtended] = useState(false);
+  const [extended, setExtended] = useState(true); // Default to expanded on desktop
   const { onSent, prevPrompts, setRecentPrompt, newChat } = useContext(Context);
 
   const loadPrompt = async (prompt) => {
@@ -12,52 +21,70 @@ function Sidebar() {
     await onSent(prompt);
   };
 
+  const menuItems = [
+    { icon: HelpCircle, label: "Help" },
+    { icon: History, label: "History" },
+    { icon: Settings, label: "Settings" },
+  ];
+
   return (
-    <div className="sidebar">
-      <div className="top">
-        <img
+    <aside className={`sidebar ${extended ? "expanded" : "collapsed"}`}>
+      <div className="sidebar-header">
+        <button
+          className="menu-button"
           onClick={() => setExtended((prev) => !prev)}
-          className="menu"
-          src={assets.menu_icon}
-          alt=""
-        />
-        <div onClick={() => newChat()} className="new-chat">
-          <img src={assets.plus_icon} alt="" />
-          {extended ? <p>New Chat</p> : null}
-        </div>
-        {extended ? (
-          <div className="recent">
-            <p className="recent-title">Recent</p>
-            {prevPrompts.map((item, index) => {
-              return (
-                <div
-                  key={index}
-                  onClick={() => loadPrompt(item)}
-                  className="recent-entry"
-                >
-                  <img src={assets.message_icon} alt="" />
-                  <p>{item.slice(0, 18)} ...</p>
+          aria-label="Toggle menu"
+        >
+          <Menu size={18} />
+        </button>
+
+        <button className="new-chat-button" onClick={() => newChat()}>
+          <Plus size={16} />
+          {extended && <span>New Chat</span>}
+        </button>
+      </div>
+
+      <div className="sidebar-content">
+        {extended && (
+          <div className="recent-section">
+            <h3 className="section-title">Recent</h3>
+            <div className="recent-list">
+              {prevPrompts.length > 0 ? (
+                prevPrompts.map((item, index) => (
+                  <button
+                    key={index}
+                    className="recent-item"
+                    onClick={() => loadPrompt(item)}
+                    title={item}
+                  >
+                    <MessageSquare size={14} />
+                    <span>
+                      {item.length > 35 ? `${item.slice(0, 35)}...` : item}
+                    </span>
+                  </button>
+                ))
+              ) : (
+                <div className="empty-state">
+                  <p>No recent conversations</p>
                 </div>
-              );
-            })}
+              )}
+            </div>
           </div>
-        ) : null}
+        )}
       </div>
-      <div className="bottom">
-        <div className="bottom-item recent-entry">
-          <img src={assets.question_icon} alt="" />
-          {extended ? <p>Help</p> : null}
-        </div>
-        <div className="bottom-item recent-entry">
-          <img src={assets.history_icon} alt="" />
-          {extended ? <p>Activity</p> : null}
-        </div>
-        <div className="bottom-item recent-entry">
-          <img src={assets.setting_icon} alt="" />
-          {extended ? <p>Settings</p> : null}
-        </div>
+
+      <div className="sidebar-footer">
+        {menuItems.map((item, index) => {
+          const IconComponent = item.icon;
+          return (
+            <button key={index} className="menu-item">
+              <IconComponent size={14} />
+              {extended && <span>{item.label}</span>}
+            </button>
+          );
+        })}
       </div>
-    </div>
+    </aside>
   );
 }
 

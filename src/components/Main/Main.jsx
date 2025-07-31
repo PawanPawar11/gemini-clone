@@ -1,7 +1,21 @@
-import { useContext } from "react";
+"use client";
+
+import { useContext, useState, useEffect } from "react";
 import "./Main.css";
-import { assets } from "../../assets/assets";
 import { Context } from "../../context/Context";
+import {
+  Send,
+  Mic,
+  Paperclip,
+  User,
+  Bot,
+  Compass,
+  MessageSquare,
+  Lightbulb,
+  Code,
+  Sun,
+  Moon,
+} from "lucide-react";
 
 function Main() {
   const {
@@ -13,84 +27,193 @@ function Main() {
     setInput,
     input,
   } = useContext(Context);
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    setTheme(savedTheme);
+    document.documentElement.setAttribute("data-theme", savedTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
+  };
+
+  const suggestionCards = [
+    {
+      text: "Give me phrases to learn a new language",
+      icon: Compass,
+      category: "Language",
+    },
+    {
+      text: "Brainstorm team bonding activities for our work retreat",
+      icon: MessageSquare,
+      category: "Planning",
+    },
+    {
+      text: "Help me understand American football",
+      icon: Lightbulb,
+      category: "Learning",
+    },
+    {
+      text: "Improve the readability of the following code",
+      icon: Code,
+      category: "Code",
+    },
+  ];
 
   return (
     <div className="main">
-      <div className="nav">
-        <p>Gemini</p>
-        <img src={assets.user_icon} alt="" />
-      </div>
-      <div className="main-container">
-        {!showResult ? (
-          <>
-            <div className="greet">
-              <p>
-                <span>Hello, Ash.</span>
-              </p>
-              <p>How can I help you today?</p>
+      <header className="nav">
+        <div className="nav-content">
+          <div className="brand">
+            <div className="brand-mark">
+              <Bot size={20} />
             </div>
-            <div className="cards">
-              <div className="card">
-                <p>Give me phrases to learn a new language</p>
-                <img src={assets.compass_icon} alt="" />
-              </div>
-              <div className="card">
-                <p>Brainstorm team bonding activities for our work retreat</p>
-                <img src={assets.message_icon} alt="" />
-              </div>
-              <div className="card">
-                <p>Help me understand American football</p>
-                <img src={assets.bulb_icon} alt="" />
-              </div>
-              <div className="card">
-                <p>Improve the readability of the following code</p>
-                <img src={assets.code_icon} alt="" />
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="result">
-            <div className="result-title">
-              <img src={assets.user_icon} alt="" />
-              <p>{recentPrompt}</p>
-            </div>
-            <div className="result-data">
-              <img src={assets.gemini_icon} alt="" />
-              {loading ? (
-                <div className="loader">
-                  <hr />
-                  <hr />
-                  <hr />
+            <h1>Assistant</h1>
+          </div>
+          <div className="nav-actions">
+            <button
+              className="theme-toggle"
+              onClick={toggleTheme}
+              title={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
+            >
+              <div className="toggle-track">
+                <div className="toggle-thumb">
+                  {theme === "light" ? <Sun size={12} /> : <Moon size={12} />}
                 </div>
-              ) : (
-                <p dangerouslySetInnerHTML={{ __html: resultData }}></p>
-              )}
+              </div>
+            </button>
+            <div className="user-info">
+              <div className="user-avatar">
+                <User size={20} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="main-container">
+        {!showResult ? (
+          <div className="welcome-section">
+            <div className="welcome-content">
+              <h2 className="welcome-title">Hello, Ash</h2>
+              <p className="welcome-subtitle">How can I help you today?</p>
+            </div>
+
+            <div className="suggestions-grid">
+              {suggestionCards.map((card, index) => {
+                const IconComponent = card.icon;
+                return (
+                  <button
+                    key={index}
+                    className="suggestion-card"
+                    onClick={() => {
+                      setInput(card.text);
+                      onSent(card.text);
+                    }}
+                  >
+                    <div className="card-header">
+                      <span className="card-category">{card.category}</span>
+                      <div className="card-icon">
+                        <IconComponent size={20} />
+                      </div>
+                    </div>
+                    <p className="card-text">{card.text}</p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <div className="conversation-container">
+            <div className="conversation">
+              <div className="message-group">
+                <div className="message user-message">
+                  <div className="message-header">
+                    <div className="message-avatar">
+                      <User size={16} />
+                    </div>
+                    <span className="message-label">You</span>
+                  </div>
+                  <div className="message-content">
+                    <p>{recentPrompt}</p>
+                  </div>
+                </div>
+
+                <div className="message assistant-message">
+                  <div className="message-header">
+                    <div className="message-avatar">
+                      <Bot size={16} />
+                    </div>
+                    <span className="message-label">Assistant</span>
+                  </div>
+                  <div className="message-content">
+                    {loading ? (
+                      <div className="loading-indicator">
+                        <div className="loading-dots">
+                          <span></span>
+                          <span></span>
+                          <span></span>
+                        </div>
+                        <span className="loading-text">Thinking...</span>
+                      </div>
+                    ) : (
+                      <div
+                        className="response-content"
+                        dangerouslySetInnerHTML={{ __html: resultData }}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
+      </main>
 
-        <div className="main-bottom">
-          <div className="search-box">
+      <footer className="input-section">
+        <div className="input-container">
+          <div className="input-wrapper">
             <input
-              onChange={(e) => setInput(e.target.value)}
-              value={input}
               type="text"
-              placeholder="Enter a prompt here"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              className="message-input"
+              onKeyPress={(e) => {
+                if (e.key === "Enter" && input.trim()) {
+                  onSent();
+                }
+              }}
             />
-            <div>
-              <img src={assets.gallery_icon} alt="" />
-              <img src={assets.mic_icon} alt="" />
-              {input ? (
-                <img onClick={() => onSent()} src={assets.send_icon} alt="" />
-              ) : null}
+            <div className="input-actions">
+              <button className="action-button" title="Attach file">
+                <Paperclip size={18} />
+              </button>
+              <button className="action-button" title="Voice input">
+                <Mic size={18} />
+              </button>
+              {input.trim() && (
+                <button
+                  className="send-button"
+                  onClick={() => onSent()}
+                  title="Send"
+                >
+                  <Send size={18} />
+                </button>
+              )}
             </div>
           </div>
-          <p className="bottom-info">
-            Gemini may display inaccurate info, including about people, so
-            double-check its responses. Your privacy & Gemini Apps
-          </p>
         </div>
-      </div>
+        <p className="disclaimer">
+          AI responses may contain inaccuracies. Please verify important
+          information.
+        </p>
+      </footer>
     </div>
   );
 }
