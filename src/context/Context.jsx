@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useState } from "react";
 import run from "../config/gemini";
 
@@ -12,7 +14,7 @@ const ContextProvider = (props) => {
   const [resultData, setResultData] = useState("");
 
   const delayPara = (index, nextWord) => {
-    setTimeout(function () {
+    setTimeout(() => {
       setResultData((prev) => prev + nextWord);
     }, 75 * index);
   };
@@ -36,22 +38,18 @@ const ContextProvider = (props) => {
       response = await run(input);
     }
 
-    let responseArray = response.split("**");
-    let newResponse = "";
-    for (let i = 0; i < responseArray.length; i++) {
-      if (i === 0 || i % 2 !== 1) {
-        newResponse += responseArray[i];
-      } else {
-        newResponse += "<b>" + responseArray[i] + "</b>";
-      }
-    }
-    let newResponse2 = newResponse.split("*").join("</br>");
-    let newResponseArray = newResponse2.split(" ");
-    for (let i = 0; i < newResponseArray.length; i++) {
-      const nextWord = newResponseArray[i];
-      delayPara(i, nextWord + " ");
-    }
     setLoading(false);
+
+    // Animate by characters instead of words to preserve Markdown formatting
+    let index = 0;
+    const animateText = () => {
+      if (index < response.length) {
+        setResultData(response.slice(0, index + 1));
+        index++;
+        setTimeout(animateText, 20); // Faster animation (20ms per character)
+      }
+    };
+    animateText();
     setInput("");
   };
 

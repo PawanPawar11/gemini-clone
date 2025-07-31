@@ -1,8 +1,8 @@
 "use client";
-
 import { useContext, useState, useEffect } from "react";
 import "./Main.css";
 import { Context } from "../../context/Context";
+import MarkdownRenderer from "../MarkdownRenderer";
 import {
   Send,
   Mic,
@@ -103,7 +103,6 @@ function Main() {
               <h2 className="welcome-title">Hello, Ash</h2>
               <p className="welcome-subtitle">How can I help you today?</p>
             </div>
-
             <div className="suggestions-grid">
               {suggestionCards.map((card, index) => {
                 const IconComponent = card.icon;
@@ -143,7 +142,6 @@ function Main() {
                     <p>{recentPrompt}</p>
                   </div>
                 </div>
-
                 <div className="message assistant-message">
                   <div className="message-header">
                     <div className="message-avatar">
@@ -162,10 +160,9 @@ function Main() {
                         <span className="loading-text">Thinking...</span>
                       </div>
                     ) : (
-                      <div
-                        className="response-content"
-                        dangerouslySetInnerHTML={{ __html: resultData }}
-                      />
+                      <div className="response-content markdown-content">
+                        <MarkdownRenderer content={resultData} />
+                      </div>
                     )}
                   </div>
                 </div>
