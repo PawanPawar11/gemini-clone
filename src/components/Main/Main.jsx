@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import "./Main.css";
 import { Context } from "../../context/Context";
 import MarkdownRenderer from "../MarkdownRenderer";
@@ -15,6 +15,7 @@ import {
   Code,
   Sun,
   Moon,
+  Menu,
 } from "lucide-react";
 
 function Main() {
@@ -27,13 +28,25 @@ function Main() {
     setInput,
     input,
   } = useContext(Context);
+
   const [theme, setTheme] = useState("light");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "light";
     setTheme(savedTheme);
     document.documentElement.setAttribute("data-theme", savedTheme);
   }, []);
+
+  useEffect(() => {
+    // Communicate mobile menu state to sidebar
+    window.dispatchEvent(
+      new CustomEvent("mobileMenuToggle", {
+        detail: { isOpen: mobileMenuOpen },
+      })
+    );
+  }, [mobileMenuOpen]);
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -65,15 +78,35 @@ function Main() {
     },
   ];
 
+  // Handle mobile sidebar toggle
+  const toggleMobileSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+    // Dispatch custom event to notify sidebar
+    window.dispatchEvent(
+      new CustomEvent("toggleSidebar", {
+        detail: { isOpen: !sidebarOpen },
+      })
+    );
+  };
+
   return (
     <div className="main">
       <header className="nav">
         <div className="nav-content">
-          <div className="brand">
-            <div className="brand-mark">
-              <Bot size={20} />
+          <div className="nav-left">
+            <button
+              className="mobile-menu-button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              <Menu size={20} />
+            </button>
+            <div className="brand">
+              <div className="brand-mark">
+                <Bot size={20} />
+              </div>
+              <h1>Assistant</h1>
             </div>
-            <h1>Assistant</h1>
           </div>
           <div className="nav-actions">
             <button
@@ -95,6 +128,29 @@ function Main() {
           </div>
         </div>
       </header>
+
+      {/* Mobile sidebar overlay */}
+      {mobileMenuOpen && (
+        <div
+          className="mobile-sidebar-overlay"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div
+          className="mobile-sidebar-overlay"
+          onClick={() => {
+            setSidebarOpen(false);
+            window.dispatchEvent(
+              new CustomEvent("toggleSidebar", {
+                detail: { isOpen: false },
+              })
+            );
+          }}
+        />
+      )}
 
       <main className="main-container">
         {!showResult ? (

@@ -40,12 +40,12 @@
   justify-content: center;
   transition: var(--transition);
   align-self: flex-start;
-  color: var(--color-gray-600);
+  color: var(--color-gray-700);
 }
 
 .menu-button:hover {
   background: var(--color-gray-100);
-  color: var(--color-gray-800);
+  color: var(--color-gray-900);
 }
 
 .new-chat-button {
@@ -72,7 +72,7 @@
 .new-chat-button:hover {
   border-color: var(--color-gray-400);
   background: var(--color-gray-50);
-  color: var(--color-gray-800);
+  color: var(--color-gray-900);
 }
 
 .new-chat-button span {
@@ -132,12 +132,12 @@
   transition: var(--transition);
   width: 100%;
   min-height: 44px;
-  color: var(--color-gray-600);
+  color: var(--color-gray-700);
 }
 
 .recent-item:hover {
   background: var(--color-gray-100);
-  color: var(--color-gray-800);
+  color: var(--color-gray-900);
 }
 
 .recent-item span {
@@ -177,7 +177,7 @@
   transition: var(--transition);
   justify-content: center;
   min-height: 44px;
-  color: var(--color-gray-600);
+  color: var(--color-gray-700);
 }
 
 .sidebar.expanded .menu-item {
@@ -186,7 +186,7 @@
 
 .menu-item:hover {
   background: var(--color-gray-100);
-  color: var(--color-gray-800);
+  color: var(--color-gray-900);
 }
 
 .menu-item span {
@@ -208,8 +208,11 @@
     transition: transform 0.2s ease;
   }
 
-  .sidebar.expanded {
+  .sidebar.mobile-open {
     transform: translateX(0);
+  }
+
+  .sidebar.expanded {
     width: 280px;
   }
 
@@ -219,7 +222,8 @@
 }
 
 @media (max-width: 480px) {
-  .sidebar.expanded {
+  .sidebar.expanded,
+  .sidebar.mobile-open {
     width: 100vw;
   }
 }

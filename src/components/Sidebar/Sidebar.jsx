@@ -1,6 +1,5 @@
 "use client";
-
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import "./Sidebar.css";
 import { Context } from "../../context/Context";
 import {
@@ -14,7 +13,31 @@ import {
 
 function Sidebar() {
   const [extended, setExtended] = useState(true); // Default to expanded on desktop
+  const [mobileOpen, setMobileOpen] = useState(false);
   const { onSent, prevPrompts, setRecentPrompt, newChat } = useContext(Context);
+
+  // Listen for mobile sidebar toggle events
+  useEffect(() => {
+    const handleToggleSidebar = (event) => {
+      setMobileOpen(event.detail.isOpen);
+    };
+
+    window.addEventListener("toggleSidebar", handleToggleSidebar);
+    return () => {
+      window.removeEventListener("toggleSidebar", handleToggleSidebar);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleMobileMenuToggle = (event) => {
+      setMobileOpen(event.detail.isOpen);
+    };
+
+    window.addEventListener("mobileMenuToggle", handleMobileMenuToggle);
+    return () => {
+      window.removeEventListener("mobileMenuToggle", handleMobileMenuToggle);
+    };
+  }, []);
 
   const loadPrompt = async (prompt) => {
     setRecentPrompt(prompt);
@@ -28,7 +51,11 @@ function Sidebar() {
   ];
 
   return (
-    <aside className={`sidebar ${extended ? "expanded" : "collapsed"}`}>
+    <aside
+      className={`sidebar ${extended ? "expanded" : "collapsed"} ${
+        mobileOpen ? "mobile-open" : ""
+      }`}
+    >
       <div className="sidebar-header">
         <button
           className="menu-button"
@@ -37,13 +64,11 @@ function Sidebar() {
         >
           <Menu size={18} />
         </button>
-
         <button className="new-chat-button" onClick={() => newChat()}>
           <Plus size={16} />
           {extended && <span>New Chat</span>}
         </button>
       </div>
-
       <div className="sidebar-content">
         {extended && (
           <div className="recent-section">
@@ -72,7 +97,6 @@ function Sidebar() {
           </div>
         )}
       </div>
-
       <div className="sidebar-footer">
         {menuItems.map((item, index) => {
           const IconComponent = item.icon;
