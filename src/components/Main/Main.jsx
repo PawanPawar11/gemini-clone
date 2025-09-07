@@ -16,6 +16,7 @@ import {
   Sun,
   Moon,
   Menu,
+  Square,
 } from "lucide-react";
 
 function Main() {
@@ -27,6 +28,8 @@ function Main() {
     resultData,
     setInput,
     input,
+    isGenerating,
+    stopGeneration,
   } = useContext(Context);
 
   const [theme, setTheme] = useState("light");
@@ -242,6 +245,7 @@ function Main() {
                   onSent();
                 }
               }}
+              disabled={isGenerating}
             />
             <div className="input-actions">
               <button className="action-button" title="Attach file">
@@ -250,14 +254,24 @@ function Main() {
               <button className="action-button" title="Voice input">
                 <Mic size={18} />
               </button>
-              {input.trim() && (
+              {isGenerating ? (
                 <button
-                  className="send-button"
-                  onClick={() => onSent()}
-                  title="Send"
+                  className="stop-button"
+                  onClick={stopGeneration}
+                  title="Stop generating"
                 >
-                  <Send size={18} />
+                  <Square size={16} />
                 </button>
+              ) : (
+                input.trim() && (
+                  <button
+                    className="send-button"
+                    onClick={() => onSent()}
+                    title="Send"
+                  >
+                    <Send size={18} />
+                  </button>
+                )
               )}
             </div>
           </div>
