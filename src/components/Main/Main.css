@@ -476,7 +476,50 @@ body {
   transition: var(--transition);
   overflow: hidden;
 }
+.stop-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background-color: #1f1f1f;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  margin-left: 4px;
+}
 
+.stop-button:hover {
+  background-color: #333333;
+  transform: scale(1.05);
+}
+
+.stop-button:active {
+  transform: scale(0.95);
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .stop-button {
+  background-color: #2d2d2d;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .stop-button:hover {
+  background-color: #404040;
+}
+
+/* Light theme adjustments */
+[data-theme="light"] .stop-button {
+  background-color: #f0f0f0;
+  color: #1f1f1f;
+}
+
+[data-theme="light"] .stop-button:hover {
+  background-color: #e0e0e0;
+}
 .input-wrapper:focus-within {
   border-color: var(--color-black);
 }
